@@ -1,0 +1,26 @@
+# Human-owned policy for the Software (re)-Factory.
+# Agents may read this file but must never modify it.
+schema_version = 1
+approved = true
+approved_policy_sha256 = "393f813fe85337e77783e7a00399bfd62b69de4a69a461720b744e63b5b5eee6"
+
+[policy]
+consequence_tier = "shared"
+merge_authority = "human"
+existing_tests = "review"
+planning_approvals = ["product_review", "alignment"]
+gate_level = "full"
+stop_conditions = ["A required gate is missing, skipped, or fails.", "A proposed change touches a never-modify path.", "The human review queue reaches its configured capacity.", "The requested work exceeds the approved Ticket or diff budget.", "The Charter is silent about a load-bearing change."]
+
+[limits]
+max_retries = 2
+max_diff_lines = 1200
+max_awaiting_human_review = 3
+max_blocked_for_human = 2
+oldest_review_hours = 24
+
+[paths]
+load_bearing = ["factory.charter.toml", "factory.project.toml", ".github/workflows", "migrations", "auth", "security"]
+editable = ["."]
+never_modify = ["factory.charter.toml", ".env", ".secrets"]
+requires_human_approval = ["factory.project.toml", "AGENTS.md", "CLAUDE.md", ".agents", ".codex", ".github/workflows", "migrations", "auth", "security", "tests"]

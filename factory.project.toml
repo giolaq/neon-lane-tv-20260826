@@ -1,0 +1,23 @@
+# Repository-specific configuration for the Software (re)-Factory.
+schema_version = 1
+
+[project]
+name = "neon-lane-tv-20260826"
+default_branch = "main"
+source_roots = ["."]
+protected_paths = [".github/workflows"]
+
+[environment]
+required_tools = ["git"]
+setup = []
+ports = []
+
+[qa]
+test_roots = ["tests"]
+test_file_patterns = ["test_ticket_{ticket}*.py", "ticket-{ticket}*.test.js", "ticket-{ticket}*.test.ts", "ticket-{ticket}*.test.tsx", "ticket_{ticket}_test.go", "ticket_{ticket}_test.rs", "Ticket{ticket}*Test.java"]
+
+[[gate]]
+name = "repository-integrity"
+cmd = "git diff --check"
+required = true
+level = "fast"
