@@ -1,3 +1,8 @@
 
 # Local Software (re)-Factory state and credentials
 .factory/
+
+# JavaScript dependencies and generated output
+node_modules/
+dist/
+coverage/
