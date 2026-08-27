@@ -1,16 +1,16 @@
-const COMMAND_BY_KEY = new Map([
-  ["ArrowLeft", "MOVE_LEFT"],
-  ["ArrowRight", "MOVE_RIGHT"],
-  ["Enter", "SELECT"],
-  [" ", "SELECT"],
-]);
+const CONTROLS = [
+  { key: "ArrowLeft", keyCode: 37, command: "MOVE_LEFT" },
+  { key: "ArrowRight", keyCode: 39, command: "MOVE_RIGHT" },
+  { key: "Enter", keyCode: 13, command: "SELECT" },
+  { key: " ", keyCode: 32, command: "SELECT" },
+];
 
-const COMMAND_BY_KEY_CODE = new Map([
-  [37, "MOVE_LEFT"],
-  [39, "MOVE_RIGHT"],
-  [13, "SELECT"],
-  [32, "SELECT"],
-]);
+const CONTROL_BY_KEY = new Map(
+  CONTROLS.map((control) => [control.key, control]),
+);
+const CONTROL_BY_KEY_CODE = new Map(
+  CONTROLS.map((control) => [control.keyCode, control]),
+);
 
 export function mapKeydown(event) {
   if (
@@ -25,17 +25,33 @@ export function mapKeydown(event) {
     return undefined;
   }
 
-  const command =
-    event.key === undefined
-      ? COMMAND_BY_KEY_CODE.get(event.keyCode)
-      : COMMAND_BY_KEY.get(event.key);
+  if (
+    (event.key !== undefined && typeof event.key !== "string") ||
+    (event.keyCode !== undefined &&
+      (typeof event.keyCode !== "number" ||
+        !Number.isInteger(event.keyCode)))
+  ) {
+    return undefined;
+  }
 
-  if (command === undefined) {
+  const keyControl = CONTROL_BY_KEY.get(event.key);
+  const keyCodeControl = CONTROL_BY_KEY_CODE.get(event.keyCode);
+
+  if (
+    keyControl !== undefined &&
+    keyCodeControl !== undefined &&
+    keyControl !== keyCodeControl
+  ) {
+    return undefined;
+  }
+
+  const control = keyControl ?? keyCodeControl;
+  if (control === undefined) {
     return undefined;
   }
 
   event.preventDefault();
-  return event.repeat === true ? undefined : command;
+  return event.repeat === true ? undefined : control.command;
 }
 
 export function attachInput(target, onCommand) {
