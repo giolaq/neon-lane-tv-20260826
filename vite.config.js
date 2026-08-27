@@ -1,8 +1,13 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { defineConfig } from "vite";
 
 const entryId = "virtual:neon-lane-entry";
 const resolvedEntryId = `\0${entryId}`;
 const entryPath = "/src/main.js";
+const projectEntryPath = resolve("src/main.js");
+const hasProjectEntry = existsSync(projectEntryPath);
 const page = `<!doctype html>
 <html lang="en">
   <head>
@@ -20,7 +25,7 @@ function projectFoundation() {
   return {
     name: "project-foundation",
     resolveId(id) {
-      if (id === entryId || id === entryPath) {
+      if (id === entryId || (!hasProjectEntry && id === entryPath)) {
         return resolvedEntryId;
       }
     },
@@ -68,7 +73,7 @@ export default defineConfig({
   plugins: [projectFoundation()],
   build: {
     rollupOptions: {
-      input: entryId,
+      input: hasProjectEntry ? projectEntryPath : entryId,
     },
   },
 });
