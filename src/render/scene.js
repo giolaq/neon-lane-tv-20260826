@@ -187,6 +187,28 @@ function createGate(id) {
   return group;
 }
 
+function disposeGate(gate) {
+  const geometries = new Set();
+  const materials = new Set();
+
+  gate.traverse((object) => {
+    if (object.geometry) {
+      geometries.add(object.geometry);
+    }
+    const objectMaterials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    for (const material of objectMaterials) {
+      if (material) {
+        materials.add(material);
+      }
+    }
+  });
+
+  geometries.forEach((geometry) => geometry.dispose());
+  materials.forEach((material) => material.dispose());
+}
+
 function obstacleWorldZ(progress) {
   return GATE_START_Z + progress * GATE_TRAVEL;
 }
@@ -265,6 +287,7 @@ export function renderScene(view, snapshot) {
   for (const [id, gate] of view.gates) {
     if (!visibleIds.has(id)) {
       view.obstacleLayer.remove(gate);
+      disposeGate(gate);
       view.gates.delete(id);
     }
   }
